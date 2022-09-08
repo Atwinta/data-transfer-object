@@ -24,6 +24,13 @@
             "Atwinta\\DTO\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Atwinta\\DTO\\ServiceProvider"
+            ]
+        }
+    },
     "config": {
         "sort-packages": true
     },

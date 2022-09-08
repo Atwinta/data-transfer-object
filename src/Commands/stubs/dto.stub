@@ -1,0 +1,12 @@
+<?php
+
+namespace {{ namespace }};
+
+use Atwinta\DTO\DTO;
+
+class {{ class }} extends DTO
+{
+    public function __construct(
+        // TODO: Добавить поля
+    ) {}
+}
