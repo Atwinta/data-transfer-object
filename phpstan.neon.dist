@@ -14,3 +14,8 @@ parameters:
         check:
             tooWideThrowType: true
             missingCheckedExceptionInThrows: true
+
+    ignoreErrors:
+        - '#Variable property access on \$this\(Atwinta\\DTO\\DTO\).#'
+        - message: '#Unsafe usage of new static\(\).#'
+          path: src/DTO.php
