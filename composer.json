@@ -1,0 +1,31 @@
+{
+    "name": "atwinta/data-transfer-object",
+    "description": "Data transfer objects for Laravel",
+    "license": "MIT",
+    "homepage": "https://github.com/Atwinta/data-transfer-object",
+    "authors": [
+        {
+            "name": "Pavel Shevchenko",
+            "email": "pasha.shevchenko.90@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "laravel/framework": "^9.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.1",
+        "nunomaduro/larastan": "^2.1",
+        "orchestra/testbench": "^7.7",
+        "phpstan/phpstan-strict-rules": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Atwinta\\DTO\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable"
+}
