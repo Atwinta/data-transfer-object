@@ -7,6 +7,7 @@ use Atwinta\DTO\Exceptions\MissingRequiredValueException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Collection;
 
 /**
  * @implements Arrayable<string, mixed>
@@ -37,8 +38,11 @@ abstract class DTO implements Arrayable, Jsonable, \JsonSerializable
             $name = $dependency->name;
             switch (true) {
                 case array_key_exists($name, $source):
-                    $parameters[] = $clone_objects && is_object($source[$name]) ?
-                        clone $source[$name] : $source[$name];
+                    $parameters[] = self::makeDependencyValue(
+                        $dependency,
+                        $clone_objects && is_object($source[$name]) ?
+                            clone $source[$name] : $source[$name],
+                    );
                     unset($source[$name]);
                     break;
                 case $dependency->isDefaultValueAvailable():
@@ -59,6 +63,39 @@ abstract class DTO implements Arrayable, Jsonable, \JsonSerializable
         }
 
         return $reflection->newInstanceArgs($parameters);
+    }
+
+    /**
+     * @param  \ReflectionParameter  $dependency
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public static function makeDependencyValue(\ReflectionParameter $dependency, mixed $value): mixed
+    {
+        /** @var \ReflectionNamedType|null $type */
+        $type = $dependency->getType();
+        if ($type === null || $type->isBuiltin()) {
+            return $value;
+        }
+        switch (true) {
+            case is_subclass_of($type->getName(), self::class):
+                /** @var callable(): mixed $callback */
+                $callback = $type->getName().'::create';
+
+                return call_user_func($callback, $value);
+            case ($type->getName() === Collection::class || is_subclass_of($type->getName(), Collection::class))
+            && is_iterable($value):
+
+                /** @var iterable<int|string, mixed> $value */
+                return Collection::make($value);
+            case is_subclass_of($type->getName(), \UnitEnum::class):
+                /** @var callable(): mixed $callback */
+                $callback = $type->getName().'::from';
+
+                return call_user_func($callback, $value);
+            default:
+                return $value;
+        }
     }
 
     /**
